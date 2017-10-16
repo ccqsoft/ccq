@@ -1,20 +1,43 @@
-include ../makebss/Make.defines
-MAKEFILE = ./Makefile
+CLEANFILES=*.a *.list *.o common.c
+PROC=proc
+GCC=gcc
 
-TARGET=../bin/getauditdate
+BINDIR=$(HOME)/bin
 
-all: $(TARGET)
-CLEANFILES=*.a *.list *.o auditdate.c core
+ORAIFLAG=-l$(ORACLE_HOME)/rdbms/public \
+         -l$(ORACLE_HOME)/rdbms/demo \
+         -l$(ORACLE_HOME)/precomp/public \
+         -l$(ORACLE_HOME)/plsql/public
 
+ORALFLAG=-L$(ORACLE_HOME)/lib \
+         -L$(ORACLE_HOME)/precomp/lib \
+         -L$(ORACLE_HOME)/rdbms/lib \
+         -L$(ORACLE_HOME)/sqlplus/lib \
+         -L$(ORACLE_HOME)/network/lib \
+         -L$(ORACLE_HOME)/plsql/lib
 
-OBJ_MAIN=getauditdate.o auditdate.o 
+IFLAG=-l$(HOME)/include $(ORAIFLAG)
 
+LFLAG=-L$(HOME)/lib $(ORALFLAG) -lclntsh
 
-$(TARGET): $(OBJ_MAIN)
-	$(MAKE) -f $(MAKEFILE) OBJS="$(OBJ_MAIN)" EXE=$@ build_libpd
+PROCFLAGS=char_map=string
+
+.SUFFIXES:.pc .c .o
+.pc.c:
+	$(PROC) $(PROCFLAGS) iname=$*
+	rm *.lis
+.pc.o:
+	$(PROC) $(PROCFLAGS) iname=$*
+	rm *.lis
+	$(GCC) $(IFLAG) -c $*.c
+.c.o:
+	$(GCC) $(IFLAG) -c $*.c
+
+all:test
+
+test:test.o common.o
+	$(GCC) $? -o $@ $(LFLAG)
+	@echo "##### $@ make success #####"
 
 clean:
-	$(RM) -f $(CLEANFILES) $(TARGET)
-
-
-
+	rm -f $(CLEANFILES)
