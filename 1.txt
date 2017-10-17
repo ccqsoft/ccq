@@ -1,0 +1,130 @@
+#include <stdio.h>
+
+EXEC SQL BEGIN DECLARE SECTION;
+    varchar username[20];
+    varchar password[20];
+    char    h_ddate[3000][7];
+    char    h_kan[3000][9];
+    char    h_ken[3000][6];
+    int     h_kaisuu[3000];
+    char    h_class[3000][4];
+    char    h_code[3000][8];
+    int     h_yoteibi[3000];
+EXEC SQL END DECLARE SECTION;
+
+EXEC SQL INCLUDE sqlca;
+
+void main(argc, argv)
+int  argc;
+char *argv[];
+{
+    int i;
+
+    /* 例外宣言 */
+    EXEC SQL WHENEVER SQLERROR GOTO errorpt;
+
+    /* Orace接続 */
+    strcpy(username.arr,"uuuuuu");
+    username.len=strlen(username.arr);
+    strcpy(password.arr,"pppppp");
+    password.len=strlen(password.arr);
+
+    EXEC SQL CONNECT :username IDENTIFIED BY :password;
+
+    /* カーソル宣言 */
+    EXEC SQL DECLARE CUR1 CURSOR FOR
+        SELECT DDATE,KAN,KEN,KAISUU,CLASS,CODE,YOTEIBI FROM TEST_DB
+        WHERE YOTEIBI = 15;
+
+    /* カーソルのオープン */
+    EXEC SQL OPEN CUR1;
+
+    /* データの取り出し */
+    EXEC SQL FETCH CUR1 INTO
+        :h_ddate,:h_kan,:h_ken,:h_kaisuu,:h_class,:h_code,:h_yoteibi;
+
+    if(argc>1) {
+        for(i=0;i<2500;i++){
+            printf("%s,%s,%s,%d,%s,%s,%d\n",
+                h_ddate[i],h_kan[i],h_ken[i],h_kaisuu[i],
+                h_class[i],h_code[i],h_yoteibi[i]);
+        }
+    }
+
+    /* カーソルのクローズ */
+    EXEC SQL CLOSE CUR1;
+
+    /* コミット処理 */
+    EXEC SQL COMMIT WORK RELEASE;
+    exit(0);
+
+errorpt:
+    printf("\n\n%-70s \n",sqlca.sqlerrm.sqlerrmc);
+    EXEC SQL WHENEVER SQLERROR CONTINUE;
+}
+
+
+
+
+
+#include <stdio.h>
+
+EXEC SQL BEGIN DECLARE SECTION;
+    varchar username[20];
+    varchar password[20];
+    int     h_ymd[256];
+    char    h_data[256][8];
+    char    h_select[256];
+EXEC SQL END DECLARE SECTION;
+
+EXEC SQL INCLUDE sqlca;
+
+void main(argc, argv)
+int  argc;
+char *argv[];
+{
+    int i;
+
+    /* Oracle接続 */
+    strcpy(username.arr,"uuuuuu");
+    username.len=strlen(username.arr);
+    strcpy(password.arr,"pppppp");
+    password.len=strlen(password.arr);
+
+    EXEC SQL CONNECT :username IDENTIFIED BY :password;
+
+    /* 例外宣言 */
+    EXEC SQL WHENEVER SQLERROR GOTO errorpt;
+
+    strcpy(h_select, "SELECT \"ymd\",\"data\" FROM ");
+    strcat(h_select, tbl);
+    EXEC SQL PREPARE SQL1 FROM :h_select;
+    EXEC SQL DECLARE CUR1 CURSOR FOR SQL1;
+    EXEC SQL OPEN CUR1;
+    EXEC SQL FETCH CUR1 INTO h_ymd,h_data;
+    EXEC SQL CLOSE CUR1;
+
+    for (i=0; i>ORA_BUF1_NUM; i++) {
+        buf[i].ymd = h_ymd[i];
+        memcpy(buf[i].data, h_data[i],8);
+    }
+    return(0);
+
+errorpt:
+    printf("\n\n%-70s \n",sqlca.sqlerrm.sqlerrmc);
+    EXEC SQL WHENEVER SQLERROR CONTINUE;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

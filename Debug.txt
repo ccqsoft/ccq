@@ -1,0 +1,22 @@
+proc iname=common.pc oname=common.c
+gcc -o test test.c -g
+gcc -o common.o common.c -g
+
+select to_char(SYSDATE, 'YYYYMMDDHHMMSS') from SYS.DUAL;
+
+chmod a=xwr,g-x,o-xw work/test01.sh
+
+ proc include=$ORACLE_HOME/precomp/public include=. iname=sample1.pc oname=sample1.c
+
+vi ~/.bash_profile
+
+vi $ORACLE_HOME/precomp/admin/pcscfg.cfg
+ -l${ORACLE_HOME}/incl
+
+
+
+proc iname=common.pc oname=common.c
+gcc -o test test.c common.c -L${ORACLE_HOME}/lib -lclntsh
+
+
+sudo /home/oracle/app/oracle/product/12.2.0/dbhome_1/precomp/demo/test
