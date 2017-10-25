@@ -1,8 +1,0 @@
-include Makefile.ini
-
-doit:
-	$(foreach var,$(MAKE_DIRS),$(MAKE) -C $(DIR_SRC)/$(var) ||exit 1 ;)
-
-clean:
-	$(foreach var,$(MAKE_DIRS),$(MAKE) -C $(DIR_SRC)/$(var) clean||exit 1 ;)
-
